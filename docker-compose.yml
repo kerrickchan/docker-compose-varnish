@@ -1,0 +1,19 @@
+name: varnish
+
+services:
+  backend:
+    extends:
+      file: ./docker-compose-varnish.yml
+      service: backend
+
+  varnish:
+    extends:
+      file: ./docker-compose-varnish.yml
+      service: varnish
+
+networks:
+  internal:
+  external:
+
+volumes:
+  varnish_data:

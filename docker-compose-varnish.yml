@@ -1,0 +1,33 @@
+services:
+  backend:
+    image: nginx:latest
+    restart: unless-stopped
+    volumes:
+      - ./backend-nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./website:/usr/share/nginx/html:ro
+    networks:
+      - internal
+
+  varnish:
+    image: varnish:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./default.vcl:/etc/varnish/default.vcl:ro
+      - varnish_data:/var/lib/varnish
+    environment:
+      - VARNISH_SIZE=512M
+    depends_on:
+      - backend
+    networks:
+      - internal
+      - external
+    command: ["-p", "default_keep=300", "-p", "default_ttl=3600"]
+
+networks:
+  internal:
+  external:
+
+volumes:
+  varnish_data:
